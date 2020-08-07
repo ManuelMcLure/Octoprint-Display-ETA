@@ -18,7 +18,16 @@ class DisplayETAPlugin(octoprint.plugin.ProgressPlugin,
                        octoprint.plugin.StartupPlugin):
 
     def on_after_startup(self):
+        global CustomTimeFormat
+        value1 = self._settings.get(["time24hr"])
+        if (value1 == True):
+            _logger.debug('24HR = True')
+            CustomTimeFormat = "HH:mm:ss"
+        else:
+            _logger.debug('24HR = False')
+            CustomTimeFormat = "hh:mm:ss a"
         _logger.debug('Display-ETA startup finished')
+        
     def get_settings_defaults(self):
         return dict(time24hr=False,displayOnPrinter=True,removeColons=False)
 
@@ -27,6 +36,7 @@ class DisplayETAPlugin(octoprint.plugin.ProgressPlugin,
             dict(type="navbar", custom_bindings=False),
             dict(type="settings", custom_bindings=False)
         ]
+    
     def __init__(self):
         self.eta_string = "-"
         self.timer = RepeatedTimer(15.0, DisplayETAPlugin.fromTimer, args=[self], run_first=True,)
@@ -35,7 +45,6 @@ class DisplayETAPlugin(octoprint.plugin.ProgressPlugin,
     def fromTimer(self):
         self.eta_string = self.calculate_ETA()
         self._plugin_manager.send_plugin_message(self._identifier, dict(eta_string=self.eta_string))
-        
         
     def calculate_ETA(self):
         _logger.debug('calculate_ETA called')
