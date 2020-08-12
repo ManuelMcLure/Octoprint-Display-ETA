@@ -19,6 +19,8 @@ class DisplayETAPlugin(octoprint.plugin.ProgressPlugin,
 
     def on_after_startup(self):
         global CustomTimeFormat
+        global doM117
+        global replaceColons
         value1 = self._settings.get(["time24hr"])
         if (value1 == True):
             _logger.debug('24HR = True')
@@ -26,6 +28,19 @@ class DisplayETAPlugin(octoprint.plugin.ProgressPlugin,
         else:
             _logger.debug('24HR = False')
             CustomTimeFormat = "hh:mm:ss a"
+        value2 = self._settings.get(["displayOnPrinter"])
+        if (value2 == True):
+            _logger.debug('M117 = True')
+            doM117 = True
+        else:
+            doM117 = False
+            _logger.debug('M117 = False')
+        value3 = self._settings.get(["removeColons"])
+        if (value3 == True):
+            replaceColons = True
+            _logger.debug('replaceColons = True')
+        else:
+            replaceColons = False
         _logger.debug('Display-ETA startup finished')
         
     def get_settings_defaults(self):
